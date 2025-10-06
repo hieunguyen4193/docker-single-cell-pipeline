@@ -40,16 +40,46 @@ RUN wget https://github.com/samtools/samtools/releases/download/1.22.1/samtools-
 RUN mkdir -p /home/hieunguyen/
 RUN mkdir -p /media
 
+RUN apt-get update
+RUN apt-get install -y \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev
+
 COPY ./install_R_packages.R /home/hieunguyen
 RUN Rscript /home/hieunguyen/install_R_packages.R
 
-RUN mkdir -p /home/hieunguyen/miniconda3 && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /home/hieunguyen/miniconda3/miniconda.sh && \
-    bash /home/hieunguyen/miniconda3/miniconda.sh -b -u -p /home/hieunguyen/miniconda3 && \
-    rm /home/hieunguyen/miniconda3/miniconda.sh
+# RUN mkdir -p /home/hieunguyen/miniconda3 && \
+#     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /home/hieunguyen/miniconda3/miniconda.sh && \
+#     bash /home/hieunguyen/miniconda3/miniconda.sh -b -u -p /home/hieunguyen/miniconda3 && \
+#     rm /home/hieunguyen/miniconda3/miniconda.sh
 
-ENV PATH=/home/hieunguyen/miniconda3/bin:${PATH}
+# Note, Hieu: include TARGETARCH build argument to support multi-arch build
+# https://docs.docker.com/engine/reference/commandline/buildx_build/#set-build
+# OTHERWISE, the installed conda will not match the architecture of the image
+# e.g., if building on an x86_64 host, the conda will be x86_64 even if the target image is arm64
+# ROSETTA ERROR rosetta error: failed to open elf at /lib64/ld-linux-x86-64.so.2
+
+ARG TARGETARCH
+RUN mkdir /home/hieunguyen/miniconda3
+RUN if [ "$TARGETARCH" = "amd64" ]; then ARCH="x86_64"; else ARCH="aarch64"; fi && \
+  wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-${ARCH}.sh \
+  -O /home/hieunguyen/miniconda3/miniconda.sh && \
+  bash /home/hieunguyen/miniconda3/miniconda.sh -b -u -p /home/hieunguyen/miniconda3 && \
+  rm /home/hieunguyen/miniconda3/miniconda.sh
 
 RUN apt-get install libzmq3-dev -y
 
+ENV PATH=/home/hieunguyen/miniconda3/bin:${PATH}
 ##### install jupyterlab and R kernel.
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main & \
+  conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+RUN conda install numpy pandas matplotlib seaborn -y 
+RUN pip install jupyterlab tqdm ipykernel 
+RUN pip install 'scanpy[leiden]' 
+RUN pip install -U scvi-tools
+RUN pip install -U scikit-learn
+RUN pip install torch torchvision

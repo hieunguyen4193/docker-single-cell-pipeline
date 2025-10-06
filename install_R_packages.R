@@ -34,7 +34,10 @@ list.of.packages <- c("BiocManager",
                       "testit", 
                       "heatmaply",
                       "devtools",
-                      "sp"
+                      "sp",
+                      "shiny",
+                      "tidyverse",
+                      "dplyr"
 )
 
 bioc.packages <- c("Seurat",
@@ -85,6 +88,7 @@ package_loading_Status_bioc <- lapply(bioc.packages,
 #####
 #####----------------------------------------------------------------------#####
 ##### UPGRADE THE CLUSTERPROFILER PACKAGES
+install.packages("devtools")
 devtools::install_github("YuLab-SMU/yulab.utils", upgrade = "never")
 remotes::install_github("GuangchuangYu/GOSemSim", upgrade = "never")
 remotes::install_github("GuangchuangYu/clusterProfiler", upgrade = "never")
