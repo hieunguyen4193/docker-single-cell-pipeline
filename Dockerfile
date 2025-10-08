@@ -83,3 +83,7 @@ RUN pip install 'scanpy[leiden]'
 RUN pip install -U scvi-tools
 RUN pip install -U scikit-learn
 RUN pip install torch torchvision
+
+# bosung some packages for R. 
+COPY ./install_R_packages2.R /home/hieunguyen
+RUN Rscript /home/hieunguyen/install_R_packages2.R
