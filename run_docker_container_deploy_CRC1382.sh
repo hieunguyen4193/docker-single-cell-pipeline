@@ -4,8 +4,8 @@ name=$2;
 docker_name=$3;
 
 sudo docker run -it \
-    -v /Users/hieunguyen:/home/hieunguyen \
-    -v /Volumes:/media -p ${port}:8787 -p 4141:4141 \
+    -v /home/hieunguyen:/home/hieunguyen \
+    -v /media:/media -p ${port}:8787 -p 4141:4141 \
     -e PASSWORD=genov4 --name ${name} \
     ${docker_name}:latest
 
