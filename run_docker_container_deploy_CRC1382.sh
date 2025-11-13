@@ -10,3 +10,5 @@ sudo docker run -it \
     ${docker_name}:latest
 
 # bash run_docker_container_deploy_CRC1382.sh 8181 rstudio1 tronghieunguyen/single_cell_pipeline 
+
+# bash run_docker_container_deploy_CRC1382.sh 8282 shinyapps_interactiveumap tronghieunguyen/single_cell_pipeline

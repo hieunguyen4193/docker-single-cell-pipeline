@@ -87,3 +87,4 @@ RUN pip install torch torchvision
 # bosung some packages for R. 
 COPY ./install_R_packages2.R /home/hieunguyen
 RUN Rscript /home/hieunguyen/install_R_packages2.R
+RUN apt install cmake  -y
