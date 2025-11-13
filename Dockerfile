@@ -88,3 +88,6 @@ RUN pip install torch torchvision
 COPY ./install_R_packages2.R /home/hieunguyen
 RUN Rscript /home/hieunguyen/install_R_packages2.R
 RUN apt install cmake  -y
+
+COPY ./install_R_packages3.R /home/hieunguyen
+RUN Rscript /home/hieunguyen/install_R_packages3.R
